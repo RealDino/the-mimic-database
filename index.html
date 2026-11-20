@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#09090d">
+<title>The Mimic | Ghost Database</title>
+<style>
+:root{--bg:#09090d;--panel:#14141c;--panel2:#1c1c27;--line:#30303d;--red:#c52b3a;--red2:#8e1725;--text:#f1eef0;--muted:#aaa4ad;--gold:#d5b56d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#301019 0,transparent 32%),var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+header{padding:30px 5vw 24px;border-bottom:1px solid var(--line);background:#09090ddd}
+.brand{font-size:12px;letter-spacing:5px;color:#e46a75;text-transform:uppercase}.hero h1{font-size:clamp(30px,6vw,58px);margin:10px 0 8px;letter-spacing:2px}.hero p{color:var(--muted);margin:0;max-width:760px;line-height:1.6}
+nav{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}.navbtn,.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 14px;border-radius:8px;cursor:pointer;font-weight:700}.navbtn.active,.btn.primary{background:var(--red2);border-color:var(--red)}.btn:hover,.navbtn:hover{filter:brightness(1.2)}
+main{width:min(1200px,92vw);margin:28px auto 60px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}.toolbar input,.toolbar select,.field input,.field select,.field textarea{background:#0d0d13;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:12px;width:100%;outline:none}.toolbar input{flex:1;min-width:210px}.toolbar select{width:auto;min-width:150px}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:28px 0 14px}.section-title h2{margin:0;font-size:22px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:14px}.card{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}.card h3{margin:0 0 7px;font-size:19px}.jp{color:var(--gold);font-size:14px}.meta{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.tag{font-size:11px;border:1px solid #4a3940;color:#e8a2a9;background:#321820;padding:5px 8px;border-radius:20px}.desc{color:var(--muted);font-size:13px;line-height:1.5;min-height:20px}.card-actions{display:flex;gap:7px;margin-top:14px}.card-actions button{flex:1;padding:8px 6px;font-size:12px}.empty{padding:35px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+.chapter{margin:18px 0 26px}.chapter-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;background:#19151c;border:1px solid var(--line);border-radius:9px;margin-bottom:10px}.chapter-head h3{margin:0;font-size:16px}
+.modal{display:none;position:fixed;inset:0;background:#000c;z-index:5;overflow:auto;padding:20px}.modal.show{display:block}.dialog{width:min(680px,100%);margin:30px auto;background:#15151e;border:1px solid #51404a;border-radius:14px;padding:22px}.dialog h2{margin-top:0}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}.field.full{grid-column:1/-1}.field textarea{min-height:90px;resize:vertical}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}
+ .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0 26px}
+.stat{background:linear-gradient(145deg,#241820,#15151e);border:1px solid #49303a;border-radius:12px;padding:18px}
+.stat strong{display:block;font-size:30px;color:#f07883;margin-bottom:5px}.stat span{font-size:12px;color:var(--muted)}
+.dash-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0}
+.bar-row{display:grid;grid-template-columns:130px 1fr 35px;gap:10px;align-items:center;margin:12px 0;font-size:13px}
+.bar{height:9px;background:#292934;border-radius:20px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#8e1725,#e35b69);border-radius:20px}
+.role-note{font-size:12px;color:var(--muted);margin:10px 0}
+footer{text-align:center;color:#77717a;border-top:1px solid var(--line);padding:24px;font-size:12px}
+@media(max-width:600px){header{padding:24px 5vw}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.section-title{align-items:flex-start;flex-direction:column}.toolbar select{flex:1}}
+
+.card-actions{display:flex;gap:8px;margin-top:14px}.card-actions .btn{flex:1;padding:8px}.rarity-Mythical{border-color:#d33}.rarity-Developer-Only{border-color:#e88b24}.rarity-Legendary{border-color:#d5b56d}.rarity-Rare{border-color:#468ee8}.rarity-Uncommon{border-color:#56a86a}.rarity-Common{border-color:#777}.dash-panel p{margin:8px 0}
+</style>
+</head>
+<body>
+<header><div class="hero"><div class="brand">Fan-made archive • Roblox The Mimic</div><h1>THE MIMIC<br>DATABASE</h1><p>Database karakter, ghost, monster, boss, event, dan Lantern Skin. Pengunjung otomatis mendapat akses baca saja; pemilik dapat masuk ke Admin Mode.</p><nav>
+<button class="navbtn active" data-view="dashboard">Dashboard</button><button class="navbtn" data-view="story">Story Books</button><button class="navbtn" data-view="events">Events & Gamemodes</button><button class="navbtn" data-view="all">All Characters</button><button class="navbtn" data-view="lanterns">Lantern Skins</button>
+</nav></div></header>
+<main>
+<div class="toolbar" id="accessBar"><span class="tag" id="roleBadge">VISITOR MODE • READ ONLY</span><button class="btn primary" id="adminLoginBtn" style="display:none">Admin Login</button><button class="btn" id="adminLogoutBtn" style="display:none">Exit Admin</button><button class="btn" id="addGhostBtn" style="display:none">＋ Add Character</button><button class="btn" id="addLanternBtn" style="display:none">＋ Add Lantern</button></div>
+<div id="characterTools" class="toolbar"><input id="search" placeholder="Cari ghost, monster, nama Jepang, atau keterangan..."><select id="bookFilter"><option value="">Semua Book</option><option>Book 1</option><option>Book 2</option><option>Book 3</option><option>Book 4</option></select><select id="statusFilter"><option value="">Semua Status</option><option>Available</option><option>Upcoming</option><option>Unavailable</option><option>Unknown</option><option>Revamped</option><option>Ended</option></select></div>
+<div id="lanternTools" style="display:none"><div class="toolbar"><input id="lanternSearch" placeholder="Search Lantern Skin..."><select id="rarityFilter"><option value="">All Rarities</option><option>Mythical</option><option>Developer-Only</option><option>Legendary</option><option>Rare</option><option>Uncommon</option><option>Common</option></select><select id="availabilityFilter"><option value="">All Availability</option><option>Available</option><option>Unavailable</option><option>The shop</option><option>Onsale</option><option>Offsale</option><option>Developer-Only</option><option>Not specified</option></select></div><div class="toolbar"><button class="btn" id="lanternAZ">Sort A–Z</button><button class="btn" id="lanternZA">Sort Z–A</button><button class="btn" id="lanternReset">Reset Order</button></div></div>
+<div id="summary" class="muted"></div><div id="content"></div>
+</main><footer>THE MIMIC DATABASE • Fan-made project • Not affiliated with the game developers</footer>
+<script>
+const initial = [
+// Book 1 - Control
+["Hiachi","ヒアチ","Hachishaku-Sama","Book 1","Chapter 1","Control","Ghost","All Modes","Available"],
+["Corrupted Hiachi","堕落したヒアチ","","Book 1","Chapter 1","Control","Ghost","All Modes","Available"],
+["Shizu","静","","Book 1","Chapter 1","Control","Ghost","All Modes","Available"],
+["Biwaki","琵脇","","Book 1","Chapter 1","Control","Ghost","All Modes","Available"],
+["Kuriko","栗子","","Book 1","Chapter 2","Control","Ghost","All Modes","Available"],
+["Megumi","恵","","Book 1","Chapter 2","Control","Ghost","All Modes","Available"],
+["Kusonoki","楠木","","Book 1","Chapter 2","Control","Ghost","All Modes","Available"],
+["Shaku","尺","","Book 1","Chapter 2","Control","Ghost","All Modes","Available"],
+["Kintoru","金取","","Book 1","Chapter 2","Control","Ghost","All Modes","Available"],
+["Kaito","海斗","","Book 1","Chapter 3","Control","Ghost","All Modes","Available"],
+["Mihari","見張り","Kuchisake-Onna","Book 1","Chapter 3","Control","Ghost","All Modes","Available"],
+["Omukade","大百足","","Book 1","Chapter 3","Control","Monster","All Modes","Available"],
+["Tokito","時戸","","Book 1","Chapter 4","Control","Ghost","All Modes","Available"],
+["Daku","濁","","Book 1","Chapter 4","Control","Ghost","All Modes","Available"],
+["Keiko","恵子","","Book 1","Chapter 4","Control","Ghost","All Modes","Available"],
+["Kusonoki","楠木","","Book 1","Chapter 4","Control","Ghost","All Modes","Available"],
+["Boss Saigomo","最後尾","Spider form","Book 1","Chapter 4","Control","Boss","All Modes","Available"],
+["Hakaisha / Evil God","破壊者 / 邪神","The Hand","Book 1","Chapter 4","Control","Boss","All Modes","Available"],
+// Book 2 - Jealousy
+["Umbozu","海坊主","","Book 2","Chapter 1","Jealousy","Ghost","All Modes","Available"],
+["Rin & Mio","凛 & 美緒","Futakuchi-Onna","Book 2","Chapter 1","Jealousy","Ghost","All Modes","Available"],
+["Nagisa","渚","Nure-Onna","Book 2","Chapter 1","Jealousy","Ghost","All Modes","Available"],
+["Keneo","金尾","","Book 2","Chapter 1","Jealousy","Ghost","All Modes","Available"],
+["Kurobozu","黒坊主","","Book 2","Chapter 1","Jealousy","Ghost","All Modes","Available"],
+["Takane","高嶺","Rokurokubi","Book 2","Chapter 1","Jealousy","Ghost","All Modes","Available"],
+["Tsukiya","月弥","Ohaguro-Bettari","Book 2","Chapter 1","Jealousy","Ghost","All Modes","Available"],
+["Hyakume","百目","","Book 2","Chapter 1","Jealousy","Monster","All Modes","Available"],
+["Kishin","鬼神","","Book 2","Chapter 1","Jealousy","Ghost","All Modes","Available"],
+["Kyogi","虚偽","Tenome","Book 2","Chapter 1","Jealousy","Ghost","All Modes","Available"],
+["Bakekujira","化鯨","Ponpon","Book 2","Chapter 1","Jealousy","Monster","All Modes","Available"],
+["Giant Jellyfish","巨大クラゲ","","Book 2","Chapter 1","Jealousy","Monster","All Modes","Available"],
+["Enzukai","えんずかい","Oni","Book 2","Chapter 1","Jealousy","Boss","All Modes","Available"],
+["Jikininki","食人鬼","","Book 2","Chapter 2","Jealousy","Monster","All Modes","Available"],
+["Nuppeppo","ぬっぺっぽう","","Book 2","Chapter 2","Jealousy","Monster","All Modes","Available"],
+["Kuishinbo","食いしん坊","","Book 2","Chapter 2","Jealousy","Monster","All Modes","Available"],
+["Gashadokuro","餓者髑髏","","Book 2","Chapter 2","Jealousy","Monster","All Modes","Available"],
+["Zuboshin","図星","Ushin-Oni","Book 2","Chapter 2","Jealousy","Monster","All Modes","Available"],
+["Teiryu","定流","","Book 2","Chapter 2","Jealousy","Ghost","All Modes","Available"],
+["Ryoshi","猟師","","Book 2","Chapter 2","Jealousy","Human","All Modes","Available"],
+["Amano Chihiro","天野千尋","","Book 2","Chapter 2","Jealousy","Human","All Modes","Available"],
+["Kurayami","暗闇","","Book 2","Chapter 2","Jealousy","Ghost","All Modes","Available"],
+["Nagisa","渚","Nure-Onna","Book 2","Chapter 2","Jealousy","Ghost","All Modes","Available"],
+["Uchiumi Senzai","内海 潜在","Isamu's older brother","Book 2","Chapter 2","Jealousy","Human","All Modes","Available"],
+["Kutsu","靴","","Book 2","Chapter 2","Jealousy","Monster","All Modes","Available"],
+["Enzukai","えんずかい","Oni's Level 2","Book 2","Chapter 2","Jealousy","Boss","All Modes","Available"],
+["Gozu & Mezu","牛頭 & 馬頭","Wendigo Twins","Book 2","Chapter 3","Jealousy","Monster","All Modes","Available"],
+["Keneo","金尾","","Book 2","Chapter 3","Jealousy","Ghost","All Modes","Available"],
+["Nejibishoma","捻尾正魔","Demon Spine / Grin Demon","Book 2","Chapter 3","Jealousy","Monster","All Modes","Available"],
+["Shinchu","真中","Fly Monster","Book 2","Chapter 3","Jealousy","Monster","All Modes","Available"],
+["Gaki","餓鬼","Hungry Monster","Book 2","Chapter 3","Jealousy","Monster","All Modes","Available"],
+["Hakamori","墓守","Baby Face Monster","Book 2","Chapter 3","Jealousy","Monster","All Modes","Available"],
+["DoDoMeki","百々目鬼","Yield","Book 2","Chapter 3","Jealousy","Monster","All Modes","Available"],
+["Enzukai","えんずかい","Oni's Level 3","Book 2","Chapter 3","Jealousy","Boss","All Modes","Available"],
+["Enzukai","えんずかい","The Shadow","Book 2","Chapter 3","Jealousy","Boss","All Modes","Available"],
+["Uchiumi Akihito","内海章仁","Isamu and Senzai's Father","Book 2","Chapter 3","Jealousy","Human","All Modes","Available"],
+["Uchiumi Isamu","内海勇む","Senzai's little brother","Book 2","Chapter 3","Jealousy","Human","All Modes","Available"],
+["Unknown Monster (Train Station)","","Unknown monster name","Book 2","Chapter 3","Jealousy","Unknown","All Modes","Unknown"],
+["Train Monster","列車の怪物","","Book 2","Chapter 3","Jealousy","Monster","All Modes","Available"],
+["Hakaisha / Evil God","破壊者 / 邪神","The Hand","Book 2","Chapter 3","Jealousy","Boss","All Modes","Available"],
+["Bugi","ブギ","","Book 2","Chapter 3","Jealousy","Monster","All Modes","Available"],
+["Bugi's chainsaw","餅","Mochi","Book 2","Chapter 3","Jealousy","Monster","All Modes","Available"],
+["Larvaes","幼虫","","Book 2","Chapter 3","Jealousy","Monster","All Modes","Available"],
+["Chozo","鳥蔵","Stone Statue","Book 2","Chapter 3","Jealousy","Monster","All Modes","Available"],
+["Nurikabe","塗壁","Smile Goblin","Book 2","Chapter 3","Jealousy","Monster","All Modes","Available"],
+["Yurei","幽霊","","Book 2","Chapter 3","Jealousy","Ghost","All Modes","Available"],
+["Kintoru","金取","Easter egg in Yurei's stage","Book 2","Chapter 3","Jealousy","Ghost","All Modes","Available"],
+["Shinigami","死神","Jigoku","Book 2","Chapter 3","Jealousy","Boss","All Modes","Available"],
+["Enzukai","えんずかい","Godzilla form","Book 2","Chapter 3","Jealousy","Boss","All Modes","Available"],
+["Ashikaga","足利","Kusonoki's teammate","Book 2","Chapter 4","Jealousy","Human","All Modes","Available"],
+["Boss Enzukai","ボス・エンズカイ","Godzilla form","Book 2","Chapter 4","Jealousy","Boss","All Modes","Available"],
+["Uchiumi Senzai","内海 潜在","Isamu's older brother","Book 2","Chapter 4","Jealousy","Human","All Modes","Available"],
+["Kyogi","虚偽","Tenome","Book 2","Chapter 4","Jealousy","Ghost","All Modes","Available"],
+["Rin & Mio","凛 & 美緒","Futakuchi-Onna","Book 2","Chapter 4","Jealousy","Ghost","All Modes","Available"],
+["Tsukiya","月弥","Ohaguro-Bettari","Book 2","Chapter 4","Jealousy","Ghost","All Modes","Available"],
+["Kurobozu","黒坊主","","Book 2","Chapter 4","Jealousy","Ghost","All Modes","Available"],
+["Takane","高嶺","Rokurokubi","Book 2","Chapter 4","Jealousy","Ghost","All Modes","Available"],
+["Zuboshin","図星","Ushin-Oni","Book 2","Chapter 4","Jealousy","Monster","All Modes","Available"],
+["Amano Chihiro","天野千尋","","Book 2","Chapter 4","Jealousy","Human","All Modes","Available"],
+["Kurayami","暗闇","","Book 2","Chapter 4","Jealousy","Ghost","All Modes","Available"],
+["Kutsu","靴","","Book 2","Chapter 4","Jealousy","Monster","All Modes","Available"],
+["Boss Enzukai","ボス・エンズカイ","Dragon God / Ryujin form","Book 2","Chapter 4","Jealousy","Boss","All Modes","Available"],
+["Boss Enzukai","ボス・エンズカイ","Skeleton / Humanoid form","Book 2","Chapter 4","Jealousy","Boss","All Modes","Available"],
+["Hakaisha / Evil God","破壊者 / 邪神","The Eyeball","Book 2","Chapter 4","Jealousy","Boss","All Modes","Available"],
+["Netamo","ねたも","Bad ending: brother succeeded","Book 2","Bad ending","Jealousy","Ghost","All Modes","Available"],
+// Book 3 - Rage
+["Antman Gata","","","Book 3","Chapter 1","Rage","Monster","All Modes","Available"],
+["Crawling Gata","","","Book 3","Chapter 1","Rage","Monster","All Modes","Available"],
+["Creeping Gata","","","Book 3","Chapter 1","Rage","Monster","All Modes","Available"],
+["Student Gata 1","","","Book 3","Chapter 1","Rage","Monster","All Modes","Available"],
+["Student Gata 2","","","Book 3","Chapter 1","Rage","Monster","All Modes","Available"],
+["Student Gata 3","","","Book 3","Chapter 1","Rage","Monster","All Modes","Available"],
+["Student Gata 4","","","Book 3","Chapter 1","Rage","Monster","All Modes","Available"],
+["Akari Mizuno","水野 明里","Girl The High School; Shiki level","Book 3","Chapter 1","Rage","Ghost","All Modes","Available"],
+["Egao","笑顔","The Smiling Woman; ?","Book 3","Chapter 1","Rage","Ghost","All Modes","Unknown"],
+["The Spider","","","Book 3","Chapter 1","Rage","Monster","All Modes","Available"],
+["Tama","たま","Nekomata","Book 3","Chapter 1","Rage","Ghost","All Modes","Available"],
+["Netamo","ねたも","","Book 3","Chapter 1","Rage","Ghost","All Modes","Available"],
+["Muki Monster","","Unknown monster name","Book 3","Chapter 1","Rage","Unknown","All Modes","Unknown"],
+["Baigai","倍害","Shiki level","Book 3","Chapter 1","Rage","Ghost","All Modes","Available"],
+["Unknown Monster 1","","Book 3 Chapter 2 placeholder","Book 3","Chapter 2","Rage","Unknown","All Modes","Upcoming"],
+["Unknown Monster 2","","Book 3 Chapter 2 placeholder","Book 3","Chapter 2","Rage","Unknown","All Modes","Upcoming"],
+["Unknown Monster 3","","Book 3 Chapter 2 placeholder","Book 3","Chapter 2","Rage","Unknown","All Modes","Upcoming"],
+["Unknown Monster 4","","Book 3 Chapter 2 placeholder","Book 3","Chapter 2","Rage","Unknown","All Modes","Upcoming"],
+["Unknown Monster 1","","Book 3 Chapter 3 placeholder","Book 3","Chapter 3","Rage","Unknown","All Modes","Unknown"],
+["Unknown Monster 2","","Book 3 Chapter 3 placeholder","Book 3","Chapter 3","Rage","Unknown","All Modes","Unknown"],
+["Unknown Monster 3","","Book 3 Chapter 3 placeholder","Book 3","Chapter 3","Rage","Unknown","All Modes","Unknown"],
+["Unknown Monster 4","","Book 3 Chapter 3 placeholder","Book 3","Chapter 3","Rage","Unknown","All Modes","Unknown"],
+["Boss Netamo","","","Book 3","Chapter 4","Rage","Boss","All Modes","Upcoming"],
+["Unknown Monster 1","","Book 3 Chapter 4 placeholder","Book 3","Chapter 4","Rage","Unknown","All Modes","Unknown"],
+["Unknown Monster 2","","Book 3 Chapter 4 placeholder","Book 3","Chapter 4","Rage","Unknown","All Modes","Unknown"],
+["Unknown Monster 3","","Book 3 Chapter 4 placeholder","Book 3","Chapter 4","Rage","Unknown","All Modes","Unknown"],
+// Book 4 - Rebirth
+["Yuma","ユマ","Yuki-Onna","Book 4","Chapter 1","Rebirth","Ghost","All Modes","Available"],
+["Unknown Monster 1","","Book 4 Chapter 1 placeholder","Book 4","Chapter 1","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 2","","Book 4 Chapter 1 placeholder","Book 4","Chapter 1","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 3","","Book 4 Chapter 1 placeholder","Book 4","Chapter 1","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 4","","Book 4 Chapter 1 placeholder","Book 4","Chapter 1","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 1","","Book 4 Chapter 2 placeholder","Book 4","Chapter 2","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 2","","Book 4 Chapter 2 placeholder","Book 4","Chapter 2","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 3","","Book 4 Chapter 2 placeholder","Book 4","Chapter 2","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 4","","Book 4 Chapter 2 placeholder","Book 4","Chapter 2","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 1","","Book 4 Chapter 3 placeholder","Book 4","Chapter 3","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 2","","Book 4 Chapter 3 placeholder","Book 4","Chapter 3","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 3","","Book 4 Chapter 3 placeholder","Book 4","Chapter 3","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 4","","Book 4 Chapter 3 placeholder","Book 4","Chapter 3","Rebirth","Unknown","All Modes","Unknown"],
+["Boss Yuma","","","Book 4","Chapter 4","Rebirth","Boss","All Modes","Upcoming"],
+["Unknown Monster 1","","Book 4 Chapter 4 placeholder","Book 4","Chapter 4","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 2","","Book 4 Chapter 4 placeholder","Book 4","Chapter 4","Rebirth","Unknown","All Modes","Unknown"],
+["Unknown Monster 3","","Book 4 Chapter 4 placeholder","Book 4","Chapter 4","Rebirth","Unknown","All Modes","Unknown"],
+// Gamemodes / events
+["Control","制御","","","", "The Witch Trial","Gamemode","All Modes","Unavailable"],
+["Jealousy","嫉妬","","","", "The Witch Trial","Gamemode","All Modes","Unavailable"],
+["Rebirth","再生","","","", "The Witch Trial","Gamemode","All Modes","Unavailable"],
+["Rage","怒り","","","", "The Witch Trial","Gamemode","All Modes","Unavailable"],
+["Kazeko","風子","","","", "The Witch Trial","Ghost","All Modes","Unavailable"],
+["Hanzu","半津","","","", "The Witch Trial","Ghost","All Modes","Unavailable"],
+["Futao & Mote","蓋男 & モテ","","","", "The Witch Trial","Ghost","All Modes","Unavailable"],
+["Nagemi","","Teke-Teke","","","Old Halloween Event 2021","Ghost","All Modes","Unavailable"],
+["Taiyo","","Onryo","","","Old Halloween Event 2021","Ghost","All Modes","Unavailable"],
+["Kabocha","","","","","Old Halloween Event 2021","Ghost","All Modes","Unavailable"],
+["Nagemi","","Teke-Teke","","","The Haunt of Halloween Trial Revamp 2024","Ghost","All Modes","Revamped"],
+["Taiyo","","Onryo","","","The Haunt of Halloween Trial Revamp 2024","Ghost","All Modes","Revamped"],
+["Kabocha","","","","","The Haunt of Halloween Trial Revamp 2024","Ghost","All Modes","Revamped"],
+["Shinigami","死神","Former name: Shihyosha","","","Hiachi's Request 2021","Ghost","All Modes","Unavailable"],
+["Shiniachi","シニアチ","Rare request character","","","Hiachi's Request 2021","Ghost","All Modes","Unavailable"],
+["Ronnie","","Pennywise","","","Nightmare Circus 2022","Ghost","All Modes","Unavailable"],
+["RingMaster","","","","","Nightmare Circus 2022","Boss","All Modes","Unavailable"],
+["Ronnie","","Pennywise","","","Nightmare Circus 2026 Revamped","Ghost","All Modes","Revamped"],
+["Dimitra","","Girl the Magic","","","Nightmare Circus 2026 Revamped","Boss","All Modes","Revamped"],
+["RingMaster","","Status: Death; original bunny hat mechanic during Dimitra boss phase 2","","","Nightmare Circus 2026 Revamped","Boss","All Modes","Ended"],
+["Bruno","","","","","Nightmare Circus 2026 Revamped - Nightmare Mode","Ghost","Nightmare","Revamped"],
+["Ronnie","","Pennywise","","","Nightmare Circus 2026 Revamped - Nightmare Mode","Ghost","Nightmare","Revamped"],
+["Dimitra","","Girl the Magic","","","Nightmare Circus 2026 Revamped - Nightmare Mode","Boss","Nightmare","Revamped"],
+["RingMaster","","Status: Death; original bunny hat mechanic during Dimitra boss phase 2","","","Nightmare Circus 2026 Revamped - Nightmare Mode","Boss","Nightmare","Ended"],
+["Krampus","","","","","Christmas Event 2021","Ghost","All Modes","Unavailable"],
+["Lampus","","Christmas Trial Nightmare Mode only","","","Christmas Event 2021","Ghost","Nightmare Mode only","Unavailable"],
+["Cheneo","","Yeti","","","Snowy Hell 2023","Boss","All Modes","Unavailable"],
+["Lepus","","Sinister Bunny","","","The Hunt Event","Ghost","All Modes","Unavailable"],
+["Egg Monster","","","","","The Hunt Event","Monster","All Modes","Unavailable"],
+["X-Gata","","Unknown levels","","","The Secret Event","Unknown","All Modes","Unavailable"],
+["Ronnie","","","","","The Hollow Event","Ghost","All Modes","Unavailable"],
+["Dimitra","","","","","The Hollow Event","Boss","All Modes","Unavailable"],
+["Hiachi","","","","","The Hollow Event","Ghost","All Modes","Unavailable"],
+["Seek","","","","","The Hollow Event","Ghost","All Modes","Unavailable"],
+["The Bitter","","","","","The Hollow Event","Ghost","All Modes","Unavailable"],
+["Peta-peta","","","","","The Hollow Event","Ghost","All Modes","Unavailable"],
+["Ao Oni","","","","","The Hollow Event","Ghost","All Modes","Unavailable"],
+["X-Gata","","Unknown levels","","","The Hollow Event","Unknown","All Modes","Unavailable"]
+].map((a,i)=>({id:"seed-"+i,name:a[0],japanese:a[1],alias:a[2],book:a[3],chapter:a[4],arc:a[5],category:a[6],mode:a[7],status:a[8],collection:(a[3]||a[4])?"story":"event",description:""}));
+
+
+const lanterns = [
+{name:"Baby Chenoo",rarity:"Mythical",unlock:"Beat Snowy Hell 2023",status:"Unavailable",range:25},
+{name:"Bloodlusted Akari",rarity:"Mythical",unlock:"25,000 Yen",status:"The shop",range:30},
+{name:"Cursed Biwa",rarity:"Mythical",unlock:"Complete Book 1 Chapters 1–4 on Nightmare Mode and collect 6,700 Yen",status:"Unavailable",range:30},
+{name:"Dimitra",rarity:"Mythical",unlock:"Beat Nightmare Circus on Nightmare Mode",status:"Available",range:30},
+{name:"Easter Bunny",rarity:"Mythical",unlock:"Obtain 7,500 Gold during Egg Collection Event",status:"Unavailable",range:25},
+{name:"Greedful Angel",rarity:"Mythical",unlock:"1,500 Robux",status:"Offsale",range:45},
+{name:"Lord Of The Night (Dracula)",rarity:"Mythical",unlock:"1,500 Robux",status:"Onsale",range:35},
+{name:"Magic Bunny",rarity:"Mythical",unlock:"Beat Nightmare Circus on Nightmare Mode",status:"Unavailable",range:20},
+{name:"Nightmare Three-Eyed",rarity:"Mythical",unlock:"1,250 Robux",status:"Offsale",range:25},
+{name:"OG Shiniachi",rarity:"Mythical",unlock:"Complete Hiachi's Request in Halloween 2021",status:"Unavailable",range:35},
+{name:"Raijin",rarity:"Mythical",unlock:"Place in Top 20",status:"Unavailable",range:30},
+{name:"Shirokuro Koi",rarity:"Mythical",unlock:"1,500 Robux",status:"Offsale",range:30},
+{name:"Shinisamu",rarity:"Mythical",unlock:"1,500 Robux",status:"Onsale",range:38},
+{name:"The Yurei",rarity:"Mythical",unlock:"1,050 Robux",status:"Offsale",range:30},
+{name:"Exclusive Lantern",rarity:"Developer-Only",unlock:"Developer-only",status:"Developer-Only",range:null},
+{name:"Sussy Slayer",rarity:"Developer-Only",unlock:"The Blade of Slayer",status:"Developer-Only",range:null},
+{name:"Sussy Stick",rarity:"Developer-Only",unlock:"The Stick",status:"Developer-Only",range:null},
+{name:"2.0 Shiniachi",rarity:"Legendary",unlock:"Complete Hiachi's Request during 2023 Anniversary",status:"Unavailable",range:30},
+{name:"Bunny RingMaster",rarity:"Legendary",unlock:"Find OG Bunny Hat in Boss Fight Phase 2",status:"Available",range:23},
+{name:"Crystal Ball (Dimitra)",rarity:"Legendary",unlock:"Complete Nightmare Circus on Normal Mode",status:"Available",range:30},
+{name:"Egao",rarity:"Legendary",unlock:"???",status:"Available",range:30},
+{name:"Enzukai Ryu",rarity:"Legendary",unlock:"10,000 Yen",status:"The shop",range:25},
+{name:"Fujin",rarity:"Legendary",unlock:"Complete within specified time limit",status:"Unavailable",range:25},
+{name:"Gozu and Mezu",rarity:"Legendary",unlock:"6,000 Yen",status:"The shop",range:25},
+{name:"Muki Blade",rarity:"Legendary",unlock:"9,000 Yen",status:"The shop",range:30},
+{name:"Santa Chenoo",rarity:"Legendary",unlock:"Beat Snowy Hell 2025",status:"Unavailable",range:25},
+{name:"Senzai",rarity:"Legendary",unlock:"10,000 Yen",status:"The shop",range:30},
+{name:"Taiyo",rarity:"Legendary",unlock:"Collect 60 candies while talking to Kabocha NPC",status:"Unavailable",range:25},
+{name:"The Music Box Ronnie",rarity:"Legendary",unlock:"Complete Nagemi's Part and Nightmare Circus",status:"Unavailable",range:28},
+{name:"Akari",rarity:"Rare",unlock:"4,000 Yen",status:"The shop",range:28},
+{name:"Alternate Senzai",rarity:"Rare",unlock:"8,000 Yen",status:"The shop",range:25},
+{name:"Baidama",rarity:"Rare",unlock:"4,000 Yen",status:"The shop",range:28},
+{name:"Bloxy Samurai",rarity:"Rare",unlock:"3rd Place Award Winner",status:"Unavailable",range:25},
+{name:"Futakuchi Onna",rarity:"Rare",unlock:"Complete Book 2 Chapter 1 on Nightmare Mode",status:"Not specified",range:22},
+{name:"Group Lantern",rarity:"Rare",unlock:"Join The Mimic group, like game, join community group",status:"Available",range:25},
+{name:"Hiachi",rarity:"Rare",unlock:"Beat The Hollow",status:"Unavailable",range:28.5},
+{name:"Jack The Balloon",rarity:"Rare",unlock:"Complete Nightmare Circus on Normal Mode",status:"Unavailable",range:20},
+{name:"Lampus",rarity:"Rare",unlock:"Beat Christmas Trial on Nightmare Mode",status:"Unavailable",range:18},
+{name:"Mochi the Chainsaw",rarity:"Rare",unlock:"2,000 Yen",status:"The shop",range:25},
+{name:"Mother & Daughter",rarity:"Rare",unlock:"4,000 Yen",status:"The shop",range:35},
+{name:"Nure Onna",rarity:"Rare",unlock:"1,500 Yen",status:"The shop",range:25},
+{name:"Puppet Hiachi",rarity:"Rare",unlock:"Complete Chapters 1–3 in The Mimic Classic",status:"Available",range:25},
+{name:"Saigomo",rarity:"Rare",unlock:"Beat Book 1 Chapter 4 on Nightmare Mode",status:"Not specified",range:28},
+{name:"Sakura No Hikari",rarity:"Rare",unlock:"500 Robux",status:"Onsale",range:28},
+{name:"Shinigami",rarity:"Rare",unlock:"Complete Jigoku Place",status:"Available",range:18},
+{name:"Tama",rarity:"Rare",unlock:"3,000 Yen",status:"The shop",range:28},
+{name:"VIP",rarity:"Rare",unlock:"700 Robux",status:"Onsale",range:28},
+{name:"X-Gata (Ken Carson)",rarity:"Rare",unlock:"Beat The Mimic X Ken Carson solo",status:"Unavailable",range:25},
+{name:"Zuboshin",rarity:"Rare",unlock:"1,000 Yen",status:"The shop",range:25},
+{name:"Chochin-Obake",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 2 on Normal Mode",status:"Not specified",range:18},
+{name:"Duality",rarity:"Uncommon",unlock:"Beat The Witch Trials on Nightmare Mode",status:"Not specified",range:18},
+{name:"Enzukai",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 4 on Nightmare Mode",status:"Not specified",range:30},
+{name:"Gata",rarity:"Uncommon",unlock:"Complete Book 3 Chapter 1 on Nightmare Mode",status:"Not specified",range:28.5},
+{name:"Kusonoki",rarity:"Uncommon",unlock:"Beat Book 1 Chapter 4 on Nightmare Mode",status:"Not specified",range:32},
+{name:"Kyogi's Hand",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 4 and defeat Senzai",status:"Not specified",range:27},
+{name:"Michiko",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 3 on Normal Mode",status:"Not specified",range:25},
+{name:"PonPon",rarity:"Uncommon",unlock:"1,000 Yen",status:"The shop",range:25},
+{name:"Shiroi-Hono",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 4 on Normal Mode and defeat Enzukai",status:"Not specified",range:25},
+{name:"Tenome",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 1 on Normal Mode",status:"Not specified",range:20},
+{name:"2x",rarity:"Common",unlock:"30 Robux",status:"Onsale",range:26},
+{name:"2024 Kabocha",rarity:"Common",unlock:"Complete Revamped Halloween Trials",status:"Not specified",range:25},
+{name:"Butterfly",rarity:"Common",unlock:"Complete Book 1 Chapter 2 on Nightmare Mode",status:"Not specified",range:17},
+{name:"Corrupted",rarity:"Common",unlock:"Complete Book 1 Chapter 3 on Nightmare Mode",status:"Not specified",range:16},
+{name:"Jack O'",rarity:"Common",unlock:"Complete The Halloween Trials",status:"Not specified",range:18},
+{name:"Rage's cage",rarity:"Common",unlock:"Complete Book 3 Chapter 1 on Normal Mode",status:"Not specified",range:22},
+{name:"Sakura",rarity:"Common",unlock:"The Mimic reached 1 billion visits",status:"Unavailable",range:25},
+{name:"Wicked Pumpkin",rarity:"Common",unlock:"Complete The Halloween Trials",status:"Not specified",range:18}
+];
+const lanternRules = [
+"Coins can only be collected in Book 2 Chapters 2–4 (Jealousy) and Book 3 Chapter 1 (Rage).",
+"Complete every chapter of the respective books on Nightmare Mode to unlock their shop lanterns.",
+"Developer Lanterns are exclusive to developers and cannot be obtained by ordinary players.",
+"Nightmare Mode is disabled for Halloween Trials (unsupported)."
+];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const arcFor = g => g.arc || ({"Book 1":"Control","Book 2":"Jealousy","Book 3":"Rage","Book 4":"Rebirth"}[g.book] || "");
+
+// Demo admin password. Change this value before testing locally.
+// IMPORTANT: A password stored in frontend JavaScript is NOT secure for a public website.
+const ADMIN_PASSWORD = "PatrioAdmin2026!";
+// Login button is only shown when the owner opens the private owner URL.
+const ownerAccess = new URLSearchParams(window.location.search).get("owner") === "1";
+let adminMode = false;
+let ghosts = JSON.parse(localStorage.getItem("mimicGhostsData") || "null") || initial.map(x=>({...x}));
+let lanternData = JSON.parse(localStorage.getItem("mimicLanternsData") || "null") || lanterns.map((x,i)=>({...x,id:"lantern-"+i}));
+let ghostOrder = JSON.parse(localStorage.getItem("mimicGhostOrder") || "null") || ghosts.map(x=>x.id);
+let lanternOrder = JSON.parse(localStorage.getItem("mimicLanternOrder") || "null") || lanternData.map(x=>x.id);
+let currentView="dashboard", lanternSort="default";
+const saveGhosts=()=>{localStorage.setItem("mimicGhostsData",JSON.stringify(ghosts));localStorage.setItem("mimicGhostOrder",JSON.stringify(ghostOrder));render();};
+const saveLanterns=()=>{localStorage.setItem("mimicLanternsData",JSON.stringify(lanternData));localStorage.setItem("mimicLanternOrder",JSON.stringify(lanternOrder));renderLanterns();};
+function orderedGhosts(){const map=new Map(ghosts.map(x=>[x.id,x]));return [...ghostOrder.map(id=>map.get(id)).filter(Boolean),...ghosts.filter(x=>!ghostOrder.includes(x.id))];}
+function orderedLanterns(){const map=new Map(lanternData.map(x=>[x.id,x]));return [...lanternOrder.map(id=>map.get(id)).filter(Boolean),...lanternData.filter(x=>!lanternOrder.includes(x.id))];}
+function updateRole(){
+  $("roleBadge").textContent=adminMode?"ADMIN MODE • OWNER CONTROLS":"VISITOR MODE • READ ONLY";
+  $("adminLoginBtn").style.display=(!adminMode && ownerAccess)?"inline-block":"none";
+  $("adminLogoutBtn").style.display=adminMode?"inline-block":"none";
+  $("addGhostBtn").style.display=adminMode && currentView!=="lanterns"?"inline-block":"none";
+  $("addLanternBtn").style.display=adminMode && currentView==="lanterns"?"inline-block":"none";
+}
+function moveCharacter(id,delta){let arr=orderedGhosts(),i=arr.findIndex(x=>x.id===id),j=i+delta;if(i<0||j<0||j>=arr.length)return;[arr[i],arr[j]]=[arr[j],arr[i]];ghostOrder=arr.map(x=>x.id);saveGhosts();}
+function resetCharacterOrder(){ghostOrder=ghosts.map(x=>x.id);saveGhosts();}
+function moveLantern(id,delta){lanternSort="default";let arr=orderedLanterns(),i=arr.findIndex(x=>x.id===id),j=i+delta;if(i<0||j<0||j>=arr.length)return;[arr[i],arr[j]]=[arr[j],arr[i]];lanternOrder=arr.map(x=>x.id);saveLanterns();}
+function resetLanternOrder(){lanternOrder=lanternData.map(x=>x.id);lanternSort="default";saveLanterns();}
+function card(g){return `<article class="card"><h3>${esc(g.name)}</h3>${g.japanese?`<div class="jp">${esc(g.japanese)}</div>`:""}${g.alias?`<div class="muted" style="font-size:13px;margin-top:5px">${esc(g.alias)}</div>`:""}<div class="meta"><span class="tag">${esc(g.category||"Ghost")}</span><span class="tag">${esc(g.status||"Unknown")}</span>${g.mode&&g.mode!=="All Modes"?`<span class="tag">${esc(g.mode)}</span>`:""}</div><div class="desc">${esc([g.book,g.chapter,arcFor(g)].filter(Boolean).join(" • ")||g.arc)}${g.description?`<br>${esc(g.description)}`:""}</div><div class="card-actions">${adminMode?`<button class="btn" onclick="moveCharacter('${g.id}',-1)">↑ Up</button><button class="btn" onclick="moveCharacter('${g.id}',1)">↓ Down</button><button class="btn" onclick="editGhost('${g.id}')">Edit</button><button class="btn" onclick="deleteGhost('${g.id}')">Delete</button>`:""}</div></article>`;}
+function dashboard(){let story=ghosts.filter(g=>g.book).length,events=ghosts.length-story,bosses=ghosts.filter(g=>g.category==="Boss").length,unknown=ghosts.filter(g=>g.status==="Unknown"||g.category==="Unknown").length,books=["Book 1","Book 2","Book 3","Book 4"],counts=books.map(b=>[b,ghosts.filter(g=>g.book===b).length]),max=Math.max(1,...counts.map(x=>x[1]));return `<div class="section-title"><h2>Database Dashboard</h2><span class="muted">${adminMode?"Admin Mode":"Public Visitor Mode"}</span></div><p class="muted">${adminMode?"Admin aktif di browser ini. Kamu dapat menambah, mengedit, menghapus, dan mengatur urutan data.":"Pengunjung dapat melihat, mencari, dan memfilter database. Pengaturan urutan hanya tersedia untuk Admin."}</p><div class="stats"><div class="stat"><strong>${ghosts.length}</strong><span>Character entries</span></div><div class="stat"><strong>${story}</strong><span>Story entries</span></div><div class="stat"><strong>${events}</strong><span>Event & gamemode entries</span></div><div class="stat"><strong>${bosses}</strong><span>Boss entries</span></div><div class="stat"><strong>${unknown}</strong><span>Unknown entries</span></div><div class="stat"><strong>${lanternData.length}</strong><span>Lantern skins</span></div></div><div class="dash-panel"><h3>Story Book Overview</h3>${counts.map(([b,n])=>`<div class="bar-row"><span>${b}</span><div class="bar"><i style="width:${Math.round(n/max*100)}%"></i></div><b>${n}</b></div>`).join("")}</div><p class="role-note">Pengaturan urutan dengan tombol Up/Down hanya tersedia saat Admin Mode aktif. Perubahan localStorage hanya tersimpan pada browser/perangkat ini.</p>`;}
+function switchView(view){currentView=view;document.querySelectorAll(".navbtn").forEach(x=>x.classList.toggle("active",x.dataset.view===view));$("characterTools").style.display=view==="lanterns"?"none":"flex";$("lanternTools").style.display=view==="lanterns"?"block":"none";updateRole();render();}
+function render(){if(currentView==="lanterns"){renderLanterns();return;}let q=$("search").value.toLowerCase(),book=$("bookFilter").value,status=$("statusFilter").value;let list=orderedGhosts().filter(g=>[g.name,g.japanese,g.alias,g.description,g.arc,g.book,g.chapter].join(" ").toLowerCase().includes(q)&&(!book||g.book===book)&&(!status||g.status===status));if(currentView==="story")list=list.filter(g=>g.collection==="story"||g.book);if(currentView==="events")list=list.filter(g=>g.collection==="event"||(!g.book&&g.arc));$("summary").textContent=currentView==="dashboard"?`Total database: ${ghosts.length} entries`:`Showing ${list.length} entries • Total: ${ghosts.length}`;let root=$("content");if(currentView==="dashboard"){root.innerHTML=dashboard();return;}let reset=`<div class="toolbar"><button class="btn" onclick="resetCharacterOrder()">Reset Character Order</button></div>`;if(!list.length){root.innerHTML=reset+'<div class="empty">Tidak ada karakter ditemukan.</div>';return;}if(currentView==="all"){root.innerHTML=reset+`<div class="grid">${list.map(card).join("")}</div>`;return;}let groups={};list.forEach(g=>{let key=currentView==="events"?(g.arc||"Other Events"):`${g.book||"Other"} — ${arcFor(g)||"Unknown Arc"}`;(groups[key]??=[]).push(g)});root.innerHTML=reset+Object.entries(groups).map(([group,items])=>{if(currentView==="events")return `<section class="chapter"><div class="section-title"><h2>${esc(group)}</h2><span class="muted">${items.length} entries</span></div><div class="grid">${items.map(card).join("")}</div></section>`;let chapters={};items.forEach(g=>(chapters[g.chapter||"Other"]??=[]).push(g));return `<section class="chapter"><div class="section-title"><h2>${esc(group)}</h2><span class="muted">${items.length} entries</span></div>${Object.entries(chapters).map(([ch,arr])=>`<div class="chapter"><div class="chapter-head"><h3>${esc(ch)}</h3></div><div class="grid">${arr.map(card).join("")}</div></div>`).join("")}</section>`}).join("");}
+function renderLanterns(){let q=$("lanternSearch").value.toLowerCase().trim(),rarity=$("rarityFilter").value,status=$("availabilityFilter").value;let list=orderedLanterns().filter(x=>(!q||(x.name+" "+x.unlock+" "+x.rarity).toLowerCase().includes(q))&&(!rarity||x.rarity===rarity)&&(!status||x.status===status));if(lanternSort==="az")list.sort((a,b)=>a.name.localeCompare(b.name,"en",{numeric:true}));if(lanternSort==="za")list.sort((a,b)=>b.name.localeCompare(a.name,"en",{numeric:true}));let html=`<div class="section-title"><h2>Lantern Skin Database</h2><span class="muted">${list.length} / ${lanternData.length} skins</span></div><div class="dash-panel"><h3>General Rules</h3>${lanternRules.map(x=>`<p class="desc">• ${esc(x)}</p>`).join("")}</div>${adminMode?`<div class="toolbar"><button class="btn" onclick="resetLanternOrder()">Reset Manual Order</button></div>`:""}`;if(!list.length){$("content").innerHTML=html+'<div class="empty">Lantern Skin tidak ditemukan.</div>';return;}html+=`<div class="grid">${list.map(x=>{let rar=x.rarity.replaceAll(" ","-");return `<article class="card rarity-${rar}"><h3>${esc(x.name)}</h3><div class="meta"><span class="tag">${esc(x.rarity)}</span><span class="tag">${esc(x.status)}</span></div><div class="desc">Unlock: ${esc(x.unlock)}<br>Availability: ${esc(x.status)}<br>Range: ${x.range===null||x.range===""?"Not specified":esc(x.range)}</div><div class="card-actions">${adminMode?`<button class="btn" onclick="moveLantern('${x.id}',-1)">↑ Up</button><button class="btn" onclick="moveLantern('${x.id}',1)">↓ Down</button><button class="btn" onclick="editLantern('${x.id}')">Edit</button><button class="btn" onclick="deleteLantern('${x.id}')">Delete</button>`:""}</div></article>`}).join("")}</div>`;$("content").innerHTML=html;}
+function ghostForm(existing={}){let name=prompt("Character name:",existing.name||"");if(name===null||!name.trim())return null;let japanese=prompt("Japanese name (optional):",existing.japanese||"");if(japanese===null)return null;let alias=prompt("Alias / title (optional):",existing.alias||"");if(alias===null)return null;let category=prompt("Category: Ghost / Monster / Boss / Human / Unknown",existing.category||"Ghost");if(category===null)return null;let collection=prompt("Collection: story atau event",existing.collection||"story");if(collection===null)return null;let book=prompt("Book (kosongkan jika event):",existing.book||"");if(book===null)return null;let chapter=prompt("Chapter (kosongkan jika tidak ada):",existing.chapter||"");if(chapter===null)return null;let arc=prompt("Story Arc / Event:",existing.arc||"");if(arc===null)return null;let mode=prompt("Game mode:",existing.mode||"All Modes");if(mode===null)return null;let status=prompt("Status: Available / Upcoming / Unavailable / Unknown / Revamped / Ended",existing.status||"Unknown");if(status===null)return null;let description=prompt("Description / notes:",existing.description||"");if(description===null)return null;return {...existing,id:existing.id||"custom-"+Date.now(),name:name.trim(),japanese:japanese.trim(),alias:alias.trim(),category:category.trim(),collection:collection.trim().toLowerCase()==="event"?"event":"story",book:book.trim(),chapter:chapter.trim(),arc:arc.trim(),mode:mode.trim(),status:status.trim(),description:description.trim()};}
+function addGhost(){if(!adminMode)return;let g=ghostForm();if(!g)return;ghosts.push(g);ghostOrder.push(g.id);saveGhosts();}
+function editGhost(id){if(!adminMode)return;let old=ghosts.find(x=>x.id===id);if(!old)return;let updated=ghostForm(old);if(updated){ghosts=ghosts.map(x=>x.id===id?updated:x);saveGhosts();}}
+function deleteGhost(id){if(!adminMode)return;let g=ghosts.find(x=>x.id===id);if(g&&confirm(`Delete character “${g.name}”?`)){ghosts=ghosts.filter(x=>x.id!==id);ghostOrder=ghostOrder.filter(x=>x!==id);saveGhosts();}}
+function lanternForm(existing={}){let name=prompt("Lantern name:",existing.name||"");if(name===null||!name.trim())return null;let rarity=prompt("Rarity: Mythical / Developer-Only / Legendary / Rare / Uncommon / Common",existing.rarity||"Rare");if(rarity===null)return null;let unlock=prompt("Unlock requirement:",existing.unlock||"");if(unlock===null)return null;let status=prompt("Availability: Available / Unavailable / The shop / Onsale / Offsale / Developer-Only / Not specified",existing.status||"Not specified");if(status===null)return null;let range=prompt("Range (number; leave blank if unknown):",existing.range??"");if(range===null)return null;return {...existing,id:existing.id||"lantern-custom-"+Date.now(),name:name.trim(),rarity:rarity.trim(),unlock:unlock.trim(),status:status.trim(),range:range.trim()===""?null:Number(range)};}
+function addLantern(){if(!adminMode)return;let x=lanternForm();if(!x)return;lanternData.push(x);lanternOrder.push(x.id);saveLanterns();}
+function editLantern(id){if(!adminMode)return;let old=lanternData.find(x=>x.id===id);if(!old)return;let updated=lanternForm(old);if(updated){lanternData=lanternData.map(x=>x.id===id?updated:x);saveLanterns();}}
+function deleteLantern(id){if(!adminMode)return;let x=lanternData.find(x=>x.id===id);if(x&&confirm(`Delete lantern “${x.name}”?`)){lanternData=lanternData.filter(y=>y.id!==id);lanternOrder=lanternOrder.filter(y=>y!==id);saveLanterns();}}
+$("adminLoginBtn").onclick=()=>{let pass=prompt("Admin password:");if(pass===null)return;if(pass===ADMIN_PASSWORD){adminMode=true;updateRole();render();alert("Admin Mode aktif pada browser ini.");}else alert("Password salah.");};
+$("adminLogoutBtn").onclick=()=>{adminMode=false;updateRole();render();};
+$("addGhostBtn").onclick=addGhost;$("addLanternBtn").onclick=addLantern;
+document.querySelectorAll(".navbtn").forEach(b=>b.addEventListener("click",()=>switchView(b.dataset.view)));
+["search","bookFilter","statusFilter"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",render));
+["lanternSearch","rarityFilter","availabilityFilter"].forEach(id=>$(id).addEventListener(id==="lanternSearch"?"input":"change",renderLanterns));
+$("lanternAZ").onclick=()=>{lanternSort="az";renderLanterns();};$("lanternZA").onclick=()=>{lanternSort="za";renderLanterns();};$("lanternReset").onclick=resetLanternOrder;
+updateRole();render();
+</script></body></html>
