@@ -1,6 +1,3 @@
-
-
-
 Ikon HTML
 index
 <!DOCTYPE html>
@@ -354,13 +351,90 @@ function switchView(view){currentView=view;document.querySelectorAll(".navbtn").
 function render(){if(currentView==="lanterns"){renderLanterns();return;}let q=$("search").value.toLowerCase(),book=$("bookFilter").value,status=$("statusFilter").value;let list=orderedGhosts().filter(g=>[g.name,g.japanese,g.alias,g.description,g.arc,g.book,g.chapter].join(" ").toLowerCase().includes(q)&&(!book||g.book===book)&&(!status||g.status===status));if(currentView==="story")list=list.filter(g=>g.collection==="story"||g.book);if(currentView==="events")list=list.filter(g=>g.collection==="event"||(!g.book&&g.arc));$("summary").textContent=adminMode?(currentView==="dashboard"?`Total database: ${ghosts.length} entries`:`Showing ${list.length} entries • Total: ${ghosts.length}`):"";let root=$("content");if(currentView==="dashboard"){root.innerHTML=dashboard();return;}let rulesBox = (currentView === "story" && (!book || book === "Book 3")) ? `<div class="dash-panel" style="margin-bottom:20px;border-color:#51303a"><h3>Book 3 – Monster Shooting Rules</h3><div class="grid" style="margin-top:12px">${book3ShootingRules.map(r=>`<div class="card" style="padding:14px"><h3 style="font-size:16px;color:var(--gold);margin-bottom:8px">${esc(r.level)}</h3>${r.points.map(p=>`<p class="desc" style="margin:4px 0">• ${esc(p)}</p>`).join("")}</div>`).join("")}</div></div>` : "";
 let reset=rulesBox + (adminMode?`<div class="toolbar"><button class="btn" onclick="resetCharacterOrder()">Reset Character Order</button></div>`:"");if(!list.length){root.innerHTML=reset+'<div class="empty">Tidak ada karakter ditemukan.</div>';return;}if(currentView==="all"){root.innerHTML=reset+`<div class="grid">${list.map(card).join("")}</div>`;return;}let groups={};list.forEach(g=>{let key=currentView==="events"?(g.arc||"Other Events"):`${g.book||"Other"} — ${arcFor(g)||"Unknown Arc"}`;(groups[key]??=[]).push(g)});root.innerHTML=reset+Object.entries(groups).map(([group,items])=>{if(currentView==="events")return `<section class="chapter"><div class="section-title"><h2>${esc(group)}</h2><span class="muted">${items.length} entries</span></div><div class="grid">${items.map(card).join("")}</div></section>`;let chapters={};items.forEach(g=>(chapters[g.chapter||"Other"]??=[]).push(g));return `<section class="chapter"><div class="section-title"><h2>${esc(group)}</h2><span class="muted">${items.length} entries</span></div>${Object.entries(chapters).map(([ch,arr])=>`<div class="chapter"><div class="chapter-head"><h3>${esc(ch)}</h3></div><div class="grid">${arr.map(card).join("")}</div></div>`).join("")}</section>`}).join("");}
 function renderLanterns(){let q=$("lanternSearch").value.toLowerCase().trim(),rarity=$("rarityFilter").value,status=$("availabilityFilter").value;let list=orderedLanterns().filter(x=>(!q||(x.name+" "+x.unlock+" "+x.rarity).toLowerCase().includes(q))&&(!rarity||x.rarity===rarity)&&(!status||x.status===status));if(lanternSort==="az")list.sort((a,b)=>a.name.localeCompare(b.name,"en",{numeric:true}));if(lanternSort==="za")list.sort((a,b)=>b.name.localeCompare(a.name,"en",{numeric:true}));let html=`<div class="section-title"><h2>Lantern Skin Database</h2><span class="muted">${list.length} / ${lanternData.length} skins</span></div><div class="dash-panel"><h3>General Rules</h3>${lanternRules.map(x=>`<p class="desc">• ${esc(x)}</p>`).join("")}</div>${adminMode?`<div class="toolbar"><button class="btn" onclick="resetLanternOrder()">Reset Manual Order</button></div>`:""}`;if(!list.length){$("content").innerHTML=html+'<div class="empty">Lantern Skin tidak ditemukan.</div>';return;}html+=`<div class="grid">${list.map(x=>{let rar=x.rarity.replaceAll(" ","-");return `<article class="card rarity-${rar}"><h3>${esc(x.name)}</h3><div class="meta"><span class="tag">${esc(x.rarity)}</span><span class="tag">${esc(x.status)}</span></div><div class="desc">Unlock: ${esc(x.unlock)}<br>Availability: ${esc(x.status)}<br>Range: ${x.range===null||x.range===""?"Not specified":esc(x.range)}</div><div class="card-actions">${adminMode?`<button class="btn" onclick="moveLantern('${x.id}',-1)">↑ Up</button><button class="btn" onclick="moveLantern('${x.id}',1)">↓ Down</button><button class="btn" onclick="editLantern('${x.id}')">Edit</button><button class="btn" onclick="deleteLantern('${x.id}')">Delete</button>`:""}</div></article>`}).join("")}</div>`;$("content").innerHTML=html;}
-function ghostForm(existing={}){let name=prompt("Character name:",existing.name||"");if(name===null||!name.trim())return null;let japanese=prompt("Japanese name (optional):",existing.japanese||"");if(japanese===null)return null;let alias=prompt("Alias / title (optional):",existing.alias||"");if(alias===null)return null;let category=prompt("Category: Ghost / Monster / Boss / Human / Unknown",existing.category||"Ghost");if(category===null)return null;let collection=prompt("Collection: story atau event",existing.collection||"story");if(collection===null)return null;let book=prompt("Book (kosongkan jika event):",existing.book||"");if(book===null)return null;let chapter=prompt("Chapter (kosongkan jika tidak ada):",existing.chapter||"");if(chapter===null)return null;let arc=prompt("Story Arc / Event:",existing.arc||"");if(arc===null)return null;let mode=prompt("Game mode:",existing.mode||"All Modes");if(mode===null)return null;let status=prompt("Status: Available / Upcoming / Unavailable / Unknown / Revamped / Ended",existing.status||"Unknown");if(status===null)return null;let description=prompt("Description / notes:",existing.description||"");if(description===null)return null;return {...existing,id:existing.id||"custom-"+Date.now(),name:name.trim(),japanese:japanese.trim(),alias:alias.trim(),category:category.trim(),collection:collection.trim().toLowerCase()==="event"?"event":"story",book:book.trim(),chapter:chapter.trim(),arc:arc.trim(),mode:mode.trim(),status:status.trim(),description:description.trim()};}
-function addGhost(){if(!adminMode)return;let g=ghostForm();if(!g)return;ghosts.push(g);ghostOrder.push(g.id);saveGhosts();}
-function editGhost(id){if(!adminMode)return;let old=ghosts.find(x=>x.id===id);if(!old)return;let updated=ghostForm(old);if(updated){ghosts=ghosts.map(x=>x.id===id?updated:x);saveGhosts();}}
+function openModal(title, fields, onSave) {
+  $("modalTitle").textContent = title;
+  const form = $("modalForm");
+  form.innerHTML = fields.map(f => {
+    const val = f.value ?? "";
+    let input = "";
+    if (f.type === "select") {
+      input = `<select name="${f.name}" ${f.required ? "required" : ""}>${f.options.map(o => `<option value="${esc(o)}" ${o === val ? "selected" : ""}>${esc(o || "(Kosong / Tidak ada)")}</option>`).join("")}</select>`;
+    } else if (f.type === "textarea") {
+      input = `<textarea name="${f.name}" placeholder="${esc(f.placeholder || "")}">${esc(val)}</textarea>`;
+    } else {
+      input = `<input type="${f.type || "text"}" name="${f.name}" value="${esc(val)}" placeholder="${esc(f.placeholder || "")}" ${f.required ? "required" : ""}>`;
+    }
+    return `<div class="field ${f.full ? "full" : ""}"><label>${esc(f.label)}</label>${input}</div>`;
+  }).join("");
+  const modal = $("editorModal");
+  modal.classList.add("show");
+  const close = () => modal.classList.remove("show");
+  $("modalCancel").onclick = close;
+  modal.onclick = e => { if (e.target === modal) close(); };
+  form.onsubmit = e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    close();
+    onSave(data);
+  };
+}
+function ghostModal(existing = {}, onSave) {
+  const isEdit = Boolean(existing.id);
+  openModal(isEdit ? `Edit Character: ${existing.name}` : "Add New Character", [
+    { name: "name", label: "Character Name *", value: existing.name, placeholder: "Contoh: Akari Mizuno", required: true },
+    { name: "japanese", label: "Japanese Name (opsional)", value: existing.japanese, placeholder: "Contoh: 水野 明里" },
+    { name: "alias", label: "Alias / Title (opsional)", value: existing.alias, placeholder: "Contoh: Shiki level" },
+    { name: "category", label: "Category", type: "select", value: existing.category || "Ghost", options: ["Ghost", "Monster", "Boss", "Human", "Gamemode", "Unknown"] },
+    { name: "collection", label: "Collection", type: "select", value: existing.collection || "story", options: ["story", "event"] },
+    { name: "book", label: "Book (kosongkan jika event)", type: "select", value: existing.book || "", options: ["", "Book 1", "Book 2", "Book 3", "Book 4"] },
+    { name: "chapter", label: "Chapter (opsional)", value: existing.chapter, placeholder: "Contoh: Chapter 1" },
+    { name: "arc", label: "Story Arc / Event Name", value: existing.arc, placeholder: "Contoh: Rage / Nightmare Circus" },
+    { name: "mode", label: "Game Mode", value: existing.mode || "All Modes", placeholder: "All Modes / Nightmare" },
+    { name: "status", label: "Status", type: "select", value: existing.status || "Available", options: ["Available", "Upcoming", "Unavailable", "Unknown", "Revamped", "Ended"] },
+    { name: "description", label: "Description / Notes", type: "textarea", value: existing.description, placeholder: "Catatan tambahan...", full: true }
+  ], data => {
+    onSave({
+      ...existing,
+      id: existing.id || "custom-" + Date.now(),
+      name: data.name.trim(),
+      japanese: data.japanese.trim(),
+      alias: data.alias.trim(),
+      category: data.category,
+      collection: data.collection,
+      book: data.book,
+      chapter: data.chapter.trim(),
+      arc: data.arc.trim(),
+      mode: data.mode.trim() || "All Modes",
+      status: data.status,
+      description: data.description.trim()
+    });
+  });
+}
+function addGhost(){if(!adminMode)return;ghostModal({},g=>{ghosts.push(g);ghostOrder.push(g.id);saveGhosts();});}
+function editGhost(id){if(!adminMode)return;let old=ghosts.find(x=>x.id===id);if(!old)return;ghostModal(old,updated=>{ghosts=ghosts.map(x=>x.id===id?updated:x);saveGhosts();});}
 function deleteGhost(id){if(!adminMode)return;let g=ghosts.find(x=>x.id===id);if(g&&confirm(`Delete character “${g.name}”?`)){ghosts=ghosts.filter(x=>x.id!==id);ghostOrder=ghostOrder.filter(x=>x!==id);saveGhosts();}}
-function lanternForm(existing={}){let name=prompt("Lantern name:",existing.name||"");if(name===null||!name.trim())return null;let rarity=prompt("Rarity: Mythical / Developer-Only / Legendary / Rare / Uncommon / Common",existing.rarity||"Rare");if(rarity===null)return null;let unlock=prompt("Unlock requirement:",existing.unlock||"");if(unlock===null)return null;let status=prompt("Availability: Available / Unavailable / The shop / Onsale / Offsale / Developer-Only / Not specified",existing.status||"Not specified");if(status===null)return null;let range=prompt("Range (number; leave blank if unknown):",existing.range??"");if(range===null)return null;return {...existing,id:existing.id||"lantern-custom-"+Date.now(),name:name.trim(),rarity:rarity.trim(),unlock:unlock.trim(),status:status.trim(),range:range.trim()===""?null:Number(range)};}
-function addLantern(){if(!adminMode)return;let x=lanternForm();if(!x)return;lanternData.push(x);lanternOrder.push(x.id);saveLanterns();}
-function editLantern(id){if(!adminMode)return;let old=lanternData.find(x=>x.id===id);if(!old)return;let updated=lanternForm(old);if(updated){lanternData=lanternData.map(x=>x.id===id?updated:x);saveLanterns();}}
+function lanternModal(existing = {}, onSave) {
+  const isEdit = Boolean(existing.id);
+  openModal(isEdit ? `Edit Lantern: ${existing.name}` : "Add New Lantern", [
+    { name: "name", label: "Lantern Name *", value: existing.name, placeholder: "Contoh: Bloodlusted Akari", required: true },
+    { name: "rarity", label: "Rarity", type: "select", value: existing.rarity || "Rare", options: ["Mythical", "Developer-Only", "Legendary", "Rare", "Uncommon", "Common"] },
+    { name: "status", label: "Availability", type: "select", value: existing.status || "Available", options: ["Available", "Unavailable", "The shop", "Onsale", "Offsale", "Developer-Only", "Not specified"] },
+    { name: "range", label: "Range (opsional)", type: "number", value: existing.range ?? "", placeholder: "Contoh: 25" },
+    { name: "unlock", label: "Unlock Requirement", value: existing.unlock, placeholder: "Contoh: 25,000 Yen", full: true }
+  ], data => {
+    onSave({
+      ...existing,
+      id: existing.id || "lantern-custom-" + Date.now(),
+      name: data.name.trim(),
+      rarity: data.rarity,
+      unlock: data.unlock.trim(),
+      status: data.status,
+      range: data.range.trim() === "" ? null : Number(data.range)
+    });
+  });
+}
+function addLantern(){if(!adminMode)return;lanternModal({},x=>{lanternData.push(x);lanternOrder.push(x.id);saveLanterns();});}
+function editLantern(id){if(!adminMode)return;let old=lanternData.find(x=>x.id===id);if(!old)return;lanternModal(old,updated=>{lanternData=lanternData.map(x=>x.id===id?updated:x);saveLanterns();});}
 function deleteLantern(id){if(!adminMode)return;let x=lanternData.find(x=>x.id===id);if(x&&confirm(`Delete lantern “${x.name}”?`)){lanternData=lanternData.filter(y=>y.id!==id);lanternOrder=lanternOrder.filter(y=>y!==id);saveLanterns();}}
 $("adminLoginBtn").onclick=()=>{let pass=prompt("Admin password:");if(pass===null)return;if(pass===ADMIN_PASSWORD){adminMode=true;updateRole();render();alert("Admin Mode aktif pada browser ini.");}else alert("Password salah.");};
 $("adminLogoutBtn").onclick=()=>{adminMode=false;updateRole();render();};
@@ -370,5 +444,6 @@ document.querySelectorAll(".navbtn").forEach(b=>b.addEventListener("click",()=>s
 ["lanternSearch","rarityFilter","availabilityFilter"].forEach(id=>$(id).addEventListener(id==="lanternSearch"?"input":"change",renderLanterns));
 $("lanternAZ").onclick=()=>{lanternSort="az";renderLanterns();};$("lanternZA").onclick=()=>{lanternSort="za";renderLanterns();};$("lanternReset").onclick=resetLanternOrder;
 updateRole();render();
-</script></body></html>
-Diproses dan dianalisis dalam kode
+</script><div class="modal" id="editorModal"><div class="dialog"><h2 id="modalTitle">Edit</h2><form id="modalForm" class="formgrid"></form><div class="modal-actions"><button type="button" class="btn" id="modalCancel">Cancel</button><button type="submit" form="modalForm" class="btn primary">Save</button></div></div></div>
+</body></html>
+Menganalisis
