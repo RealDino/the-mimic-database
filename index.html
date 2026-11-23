@@ -35,7 +35,7 @@ footer{text-align:center;color:#77717a;border-top:1px solid var(--line);padding:
 <main>
 <div class="toolbar" id="accessBar"><span class="tag" id="roleBadge">VISITOR MODE • READ ONLY</span><button class="btn primary" id="adminLoginBtn" style="display:none">Admin Login</button><button class="btn" id="adminLogoutBtn" style="display:none">Exit Admin</button><button class="btn" id="addGhostBtn" style="display:none">＋ Add Character</button><button class="btn" id="addLanternBtn" style="display:none">＋ Add Lantern</button></div>
 <div id="characterTools" class="toolbar"><input id="search" placeholder="Cari ghost, monster, nama Jepang, atau keterangan..."><select id="bookFilter"><option value="">Semua Book</option><option>Book 1</option><option>Book 2</option><option>Book 3</option><option>Book 4</option></select><select id="statusFilter"><option value="">Semua Status</option><option>Available</option><option>Upcoming</option><option>Unavailable</option><option>Unknown</option><option>Revamped</option><option>Ended</option></select></div>
-<div id="lanternTools" style="display:none"><div class="toolbar"><input id="lanternSearch" placeholder="Search Lantern Skin..."><select id="rarityFilter"><option value="">All Rarities</option><option>Mythical</option><option>Developer-Only</option><option>Legendary</option><option>Rare</option><option>Uncommon</option><option>Common</option></select><select id="availabilityFilter"><option value="">All Availability</option><option>Available</option><option>Unavailable</option><option>The shop</option><option>Onsale</option><option>Offsale</option><option>Developer-Only</option><option>Not specified</option></select></div><div class="toolbar"><button class="btn" id="lanternAZ">Sort A–Z</button><button class="btn" id="lanternZA">Sort Z–A</button><button class="btn" id="lanternReset">Reset Order</button></div></div>
+<div id="lanternTools" style="display:none"><div class="toolbar"><input id="lanternSearch" placeholder="Search Lantern Skin..."><select id="rarityFilter"><option value="">All Rarities</option><option>Mythical</option><option>Developer-Only</option><option>Legendary</option><option>Rare</option><option>Uncommon</option><option>Common</option></select><select id="availabilityFilter"><option value="">All Availability</option><option>Available</option><option>Obtainable</option><option>Unavailable</option><option>The shop</option><option>Onsale</option><option>Offsale</option><option>Developer-Only</option><option>Not specified</option></select><select id="lanternModeFilter"><option value="">All Modes</option><option>Normal Mode</option><option>Nightmare Mode</option><option>All Modes</option><option>Not specified</option></select></div><div class="toolbar"><button class="btn" id="lanternAZ">Sort A–Z</button><button class="btn" id="lanternZA">Sort Z–A</button><button class="btn" id="lanternReset">Reset Order</button></div></div>
 <div id="summary" class="muted"></div><div id="content"></div>
 </main><footer>THE MIMIC DATABASE • Fan-made project • Not affiliated with the game developers</footer>
 <script>
@@ -213,73 +213,73 @@ const initial = [
 
 
 const lanterns = [
-{name:"Baby Chenoo",rarity:"Mythical",unlock:"Beat Snowy Hell 2023",status:"Unavailable",range:25},
-{name:"Bloodlusted Akari",rarity:"Mythical",unlock:"25,000 Yen",status:"The shop",range:30},
-{name:"Cursed Biwa",rarity:"Mythical",unlock:"Complete Book 1 Chapters 1–4 on Nightmare Mode and collect 6,700 Yen",status:"Unavailable",range:30},
-{name:"Dimitra",rarity:"Mythical",unlock:"Beat Nightmare Circus on Nightmare Mode",status:"Available",range:30},
-{name:"Easter Bunny",rarity:"Mythical",unlock:"Obtain 7,500 Gold during Egg Collection Event",status:"Unavailable",range:25},
-{name:"Greedful Angel",rarity:"Mythical",unlock:"1,500 Robux",status:"Offsale",range:45},
-{name:"Lord Of The Night (Dracula)",rarity:"Mythical",unlock:"1,500 Robux",status:"Onsale",range:35},
-{name:"Magic Bunny",rarity:"Mythical",unlock:"Beat Nightmare Circus on Nightmare Mode",status:"Unavailable",range:20},
-{name:"Nightmare Three-Eyed",rarity:"Mythical",unlock:"1,250 Robux",status:"Offsale",range:25},
-{name:"OG Shiniachi",rarity:"Mythical",unlock:"Complete Hiachi's Request in Halloween 2021",status:"Unavailable",range:35},
-{name:"Raijin",rarity:"Mythical",unlock:"Place in Top 20",status:"Unavailable",range:30},
-{name:"Shirokuro Koi",rarity:"Mythical",unlock:"1,500 Robux",status:"Offsale",range:30},
-{name:"Shinisamu",rarity:"Mythical",unlock:"1,500 Robux",status:"Onsale",range:38},
-{name:"The Yurei",rarity:"Mythical",unlock:"1,050 Robux",status:"Offsale",range:30},
-{name:"Exclusive Lantern",rarity:"Developer-Only",unlock:"Developer-only",status:"Developer-Only",range:null},
-{name:"Sussy Slayer",rarity:"Developer-Only",unlock:"The Blade of Slayer",status:"Developer-Only",range:null},
-{name:"Sussy Stick",rarity:"Developer-Only",unlock:"The Stick",status:"Developer-Only",range:null},
-{name:"2.0 Shiniachi",rarity:"Legendary",unlock:"Complete Hiachi's Request during 2023 Anniversary",status:"Unavailable",range:30},
-{name:"Bunny RingMaster",rarity:"Legendary",unlock:"Find OG Bunny Hat in Boss Fight Phase 2",status:"Available",range:23},
-{name:"Crystal Ball (Dimitra)",rarity:"Legendary",unlock:"Complete Nightmare Circus on Normal Mode",status:"Available",range:30},
-{name:"Egao",rarity:"Legendary",unlock:"???",status:"Available",range:30},
-{name:"Enzukai Ryu",rarity:"Legendary",unlock:"10,000 Yen",status:"The shop",range:25},
-{name:"Fujin",rarity:"Legendary",unlock:"Complete within specified time limit",status:"Unavailable",range:25},
-{name:"Gozu and Mezu",rarity:"Legendary",unlock:"6,000 Yen",status:"The shop",range:25},
-{name:"Muki Blade",rarity:"Legendary",unlock:"9,000 Yen",status:"The shop",range:30},
-{name:"Santa Chenoo",rarity:"Legendary",unlock:"Beat Snowy Hell 2025",status:"Unavailable",range:25},
-{name:"Senzai",rarity:"Legendary",unlock:"10,000 Yen",status:"The shop",range:30},
-{name:"Taiyo",rarity:"Legendary",unlock:"Collect 60 candies while talking to Kabocha NPC",status:"Unavailable",range:25},
-{name:"The Music Box Ronnie",rarity:"Legendary",unlock:"Complete Nagemi's Part and Nightmare Circus",status:"Unavailable",range:28},
-{name:"Akari",rarity:"Rare",unlock:"4,000 Yen",status:"The shop",range:28},
-{name:"Alternate Senzai",rarity:"Rare",unlock:"8,000 Yen",status:"The shop",range:25},
-{name:"Baidama",rarity:"Rare",unlock:"4,000 Yen",status:"The shop",range:28},
-{name:"Bloxy Samurai",rarity:"Rare",unlock:"3rd Place Award Winner",status:"Unavailable",range:25},
-{name:"Futakuchi Onna",rarity:"Rare",unlock:"Complete Book 2 Chapter 1 on Nightmare Mode",status:"Not specified",range:22},
-{name:"Group Lantern",rarity:"Rare",unlock:"Join The Mimic group, like game, join community group",status:"Available",range:25},
-{name:"Hiachi",rarity:"Rare",unlock:"Beat The Hollow",status:"Unavailable",range:28.5},
-{name:"Jack The Balloon",rarity:"Rare",unlock:"Complete Nightmare Circus on Normal Mode",status:"Unavailable",range:20},
-{name:"Lampus",rarity:"Rare",unlock:"Beat Christmas Trial on Nightmare Mode",status:"Unavailable",range:18},
-{name:"Mochi the Chainsaw",rarity:"Rare",unlock:"2,000 Yen",status:"The shop",range:25},
-{name:"Mother & Daughter",rarity:"Rare",unlock:"4,000 Yen",status:"The shop",range:35},
-{name:"Nure Onna",rarity:"Rare",unlock:"1,500 Yen",status:"The shop",range:25},
-{name:"Puppet Hiachi",rarity:"Rare",unlock:"Complete Chapters 1–3 in The Mimic Classic",status:"Available",range:25},
-{name:"Saigomo",rarity:"Rare",unlock:"Beat Book 1 Chapter 4 on Nightmare Mode",status:"Not specified",range:28},
-{name:"Sakura No Hikari",rarity:"Rare",unlock:"500 Robux",status:"Onsale",range:28},
-{name:"Shinigami",rarity:"Rare",unlock:"Complete Jigoku Place",status:"Available",range:18},
-{name:"Tama",rarity:"Rare",unlock:"3,000 Yen",status:"The shop",range:28},
-{name:"VIP",rarity:"Rare",unlock:"700 Robux",status:"Onsale",range:28},
-{name:"X-Gata (Ken Carson)",rarity:"Rare",unlock:"Beat The Mimic X Ken Carson solo",status:"Unavailable",range:25},
-{name:"Zuboshin",rarity:"Rare",unlock:"1,000 Yen",status:"The shop",range:25},
-{name:"Chochin-Obake",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 2 on Normal Mode",status:"Not specified",range:18},
-{name:"Duality",rarity:"Uncommon",unlock:"Beat The Witch Trials on Nightmare Mode",status:"Not specified",range:18},
-{name:"Enzukai",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 4 on Nightmare Mode",status:"Not specified",range:30},
-{name:"Gata",rarity:"Uncommon",unlock:"Complete Book 3 Chapter 1 on Nightmare Mode",status:"Not specified",range:28.5},
-{name:"Kusonoki",rarity:"Uncommon",unlock:"Beat Book 1 Chapter 4 on Nightmare Mode",status:"Not specified",range:32},
-{name:"Kyogi's Hand",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 4 and defeat Senzai",status:"Not specified",range:27},
-{name:"Michiko",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 3 on Normal Mode",status:"Not specified",range:25},
-{name:"PonPon",rarity:"Uncommon",unlock:"1,000 Yen",status:"The shop",range:25},
-{name:"Shiroi-Hono",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 4 on Normal Mode and defeat Enzukai",status:"Not specified",range:25},
-{name:"Tenome",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 1 on Normal Mode",status:"Not specified",range:20},
-{name:"2x",rarity:"Common",unlock:"30 Robux",status:"Onsale",range:26},
-{name:"2024 Kabocha",rarity:"Common",unlock:"Complete Revamped Halloween Trials",status:"Not specified",range:25},
-{name:"Butterfly",rarity:"Common",unlock:"Complete Book 1 Chapter 2 on Nightmare Mode",status:"Not specified",range:17},
-{name:"Corrupted",rarity:"Common",unlock:"Complete Book 1 Chapter 3 on Nightmare Mode",status:"Not specified",range:16},
-{name:"Jack O'",rarity:"Common",unlock:"Complete The Halloween Trials",status:"Not specified",range:18},
-{name:"Rage's cage",rarity:"Common",unlock:"Complete Book 3 Chapter 1 on Normal Mode",status:"Not specified",range:22},
-{name:"Sakura",rarity:"Common",unlock:"The Mimic reached 1 billion visits",status:"Unavailable",range:25},
-{name:"Wicked Pumpkin",rarity:"Common",unlock:"Complete The Halloween Trials",status:"Not specified",range:18}
+{name:"Baby Chenoo",rarity:"Mythical",unlock:"Beat Snowy Hell 2023",status:"Unavailable",mode:"Not specified",range:25},
+{name:"Bloodlusted Akari",rarity:"Mythical",unlock:"25,000 Yen",status:"The shop",mode:"Not specified",range:30},
+{name:"Cursed Biwa",rarity:"Mythical",unlock:"Complete Book 1 Chapters 1–4 on Nightmare Mode and collect 6,700 Yen",status:"Unavailable",mode:"Nightmare Mode",range:30},
+{name:"Dimitra",rarity:"Mythical",unlock:"Beat Nightmare Circus on Nightmare Mode",status:"Available",mode:"Nightmare Mode",range:30},
+{name:"Easter Bunny",rarity:"Mythical",unlock:"Obtain 7,500 Gold during Egg Collection Event",status:"Unavailable",mode:"Not specified",range:25},
+{name:"Greedful Angel",rarity:"Mythical",unlock:"1,500 Robux",status:"Offsale",mode:"Not specified",range:45},
+{name:"Lord Of The Night (Dracula)",rarity:"Mythical",unlock:"1,500 Robux",status:"Onsale",mode:"Not specified",range:35},
+{name:"Magic Bunny",rarity:"Mythical",unlock:"Beat Nightmare Circus on Nightmare Mode",status:"Unavailable",mode:"Nightmare Mode",range:20},
+{name:"Nightmare Three-Eyed",rarity:"Mythical",unlock:"1,250 Robux",status:"Offsale",mode:"Not specified",range:25},
+{name:"OG Shiniachi",rarity:"Mythical",unlock:"Complete Hiachi's Request in Halloween 2021",status:"Unavailable",mode:"Not specified",range:35},
+{name:"Raijin",rarity:"Mythical",unlock:"Place in Top 20",status:"Unavailable",mode:"Not specified",range:30},
+{name:"Shirokuro Koi",rarity:"Mythical",unlock:"1,500 Robux",status:"Offsale",mode:"Not specified",range:30},
+{name:"Shinisamu",rarity:"Mythical",unlock:"1,500 Robux",status:"Onsale",mode:"Not specified",range:38},
+{name:"The Yurei",rarity:"Mythical",unlock:"1,050 Robux",status:"Offsale",mode:"Not specified",range:30},
+{name:"Exclusive Lantern",rarity:"Developer-Only",unlock:"Developer-only",status:"Developer-Only",mode:"Not specified",range:null},
+{name:"Sussy Slayer",rarity:"Developer-Only",unlock:"The Blade of Slayer",status:"Developer-Only",mode:"Not specified",range:null},
+{name:"Sussy Stick",rarity:"Developer-Only",unlock:"The Stick",status:"Developer-Only",mode:"Not specified",range:null},
+{name:"2.0 Shiniachi",rarity:"Legendary",unlock:"Complete Hiachi's Request during 2023 Anniversary",status:"Unavailable",mode:"Not specified",range:30},
+{name:"Bunny RingMaster",rarity:"Legendary",unlock:"Find OG Bunny Hat in Boss Fight Phase 2",status:"Available",mode:"Not specified",range:23},
+{name:"Crystal Ball (Dimitra)",rarity:"Legendary",unlock:"Complete Nightmare Circus on Normal Mode",status:"Available",mode:"Normal Mode",range:30},
+{name:"Egao",rarity:"Legendary",unlock:"???",status:"Available",mode:"Not specified",range:30},
+{name:"Enzukai Ryu",rarity:"Legendary",unlock:"10,000 Yen",status:"The shop",mode:"Not specified",range:25},
+{name:"Fujin",rarity:"Legendary",unlock:"Complete within specified time limit",status:"Unavailable",mode:"Not specified",range:25},
+{name:"Gozu and Mezu",rarity:"Legendary",unlock:"6,000 Yen",status:"The shop",mode:"Not specified",range:25},
+{name:"Muki Blade",rarity:"Legendary",unlock:"9,000 Yen",status:"The shop",mode:"Not specified",range:30},
+{name:"Santa Chenoo",rarity:"Legendary",unlock:"Beat Snowy Hell 2025",status:"Unavailable",mode:"Not specified",range:25},
+{name:"Senzai",rarity:"Legendary",unlock:"10,000 Yen",status:"The shop",mode:"Not specified",range:30},
+{name:"Taiyo",rarity:"Legendary",unlock:"Collect 60 candies while talking to Kabocha NPC",status:"Unavailable",mode:"Not specified",range:25},
+{name:"The Music Box Ronnie",rarity:"Legendary",unlock:"Complete Nagemi's Part and Nightmare Circus",status:"Unavailable",mode:"Not specified",range:28},
+{name:"Akari",rarity:"Rare",unlock:"4,000 Yen",status:"The shop",mode:"Not specified",range:28},
+{name:"Alternate Senzai",rarity:"Rare",unlock:"8,000 Yen",status:"The shop",mode:"Not specified",range:25},
+{name:"Baidama",rarity:"Rare",unlock:"4,000 Yen",status:"The shop",mode:"Not specified",range:28},
+{name:"Bloxy Samurai",rarity:"Rare",unlock:"3rd Place Award Winner",status:"Unavailable",mode:"Not specified",range:25},
+{name:"Futakuchi Onna",rarity:"Rare",unlock:"Complete Book 2 Chapter 1 on Nightmare Mode",status:"Obtainable",mode:"Nightmare Mode",range:22},
+{name:"Group Lantern",rarity:"Rare",unlock:"Join The Mimic group, like game, join community group",status:"Available",mode:"Not specified",range:25},
+{name:"Hiachi",rarity:"Rare",unlock:"Beat The Hollow",status:"Unavailable",mode:"Not specified",range:28.5},
+{name:"Jack The Balloon",rarity:"Rare",unlock:"Complete Nightmare Circus on Normal Mode",status:"Unavailable",mode:"Normal Mode",range:20},
+{name:"Lampus",rarity:"Rare",unlock:"Beat Christmas Trial on Nightmare Mode",status:"Unavailable",mode:"Nightmare Mode",range:18},
+{name:"Mochi the Chainsaw",rarity:"Rare",unlock:"2,000 Yen",status:"The shop",mode:"Not specified",range:25},
+{name:"Mother & Daughter",rarity:"Rare",unlock:"4,000 Yen",status:"The shop",mode:"Not specified",range:35},
+{name:"Nure Onna",rarity:"Rare",unlock:"1,500 Yen",status:"The shop",mode:"Not specified",range:25},
+{name:"Puppet Hiachi",rarity:"Rare",unlock:"Complete Chapters 1–3 in The Mimic Classic",status:"Available",mode:"Not specified",range:25},
+{name:"Saigomo",rarity:"Rare",unlock:"Beat Book 1 Chapter 4 on Nightmare Mode",status:"Obtainable",mode:"Nightmare Mode",range:28},
+{name:"Sakura No Hikari",rarity:"Rare",unlock:"500 Robux",status:"Onsale",mode:"Not specified",range:28},
+{name:"Shinigami",rarity:"Rare",unlock:"Complete Jigoku Place",status:"Available",mode:"Not specified",range:18},
+{name:"Tama",rarity:"Rare",unlock:"3,000 Yen",status:"The shop",mode:"Not specified",range:28},
+{name:"VIP",rarity:"Rare",unlock:"700 Robux",status:"Onsale",mode:"Not specified",range:28},
+{name:"X-Gata (Ken Carson)",rarity:"Rare",unlock:"Beat The Mimic X Ken Carson solo",status:"Unavailable",mode:"Not specified",range:25},
+{name:"Zuboshin",rarity:"Rare",unlock:"1,000 Yen",status:"The shop",mode:"Not specified",range:25},
+{name:"Chochin-Obake",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 2 on Normal Mode",status:"Obtainable",mode:"Normal Mode",range:18},
+{name:"Duality",rarity:"Uncommon",unlock:"Beat The Witch Trials on Nightmare Mode",status:"Not specified",mode:"Nightmare Mode",range:18},
+{name:"Enzukai",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 4 on Nightmare Mode",status:"Obtainable",mode:"Nightmare Mode",range:30},
+{name:"Gata",rarity:"Uncommon",unlock:"Complete Book 3 Chapter 1 on Nightmare Mode",status:"Obtainable",mode:"Nightmare Mode",range:28.5},
+{name:"Kusonoki",rarity:"Uncommon",unlock:"Beat Book 1 Chapter 4 on Nightmare Mode",status:"Obtainable",mode:"Nightmare Mode",range:32},
+{name:"Kyogi's Hand",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 4 and defeat Senzai",status:"Not specified",mode:"Not specified",range:27},
+{name:"Michiko",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 3 on Normal Mode",status:"Obtainable",mode:"Normal Mode",range:25},
+{name:"PonPon",rarity:"Uncommon",unlock:"1,000 Yen",status:"The shop",mode:"Not specified",range:25},
+{name:"Shiroi-Hono",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 4 on Normal Mode and defeat Enzukai",status:"Obtainable",mode:"Normal Mode",range:25},
+{name:"Tenome",rarity:"Uncommon",unlock:"Complete Book 2 Chapter 1 on Normal Mode",status:"Obtainable",mode:"Normal Mode",range:20},
+{name:"2x",rarity:"Common",unlock:"30 Robux",status:"Onsale",mode:"Not specified",range:26},
+{name:"2024 Kabocha",rarity:"Common",unlock:"Complete Revamped Halloween Trials",status:"Not specified",mode:"Not specified",range:25},
+{name:"Butterfly",rarity:"Common",unlock:"Complete Book 1 Chapter 2 on Nightmare Mode",status:"Obtainable",mode:"Nightmare Mode",range:17},
+{name:"Corrupted",rarity:"Common",unlock:"Complete Book 1 Chapter 3 on Nightmare Mode",status:"Obtainable",mode:"Nightmare Mode",range:16},
+{name:"Jack O'",rarity:"Common",unlock:"Complete The Halloween Trials",status:"Not specified",mode:"Not specified",range:18},
+{name:"Rage's cage",rarity:"Common",unlock:"Complete Book 3 Chapter 1 on Normal Mode",status:"Obtainable",mode:"Normal Mode",range:22},
+{name:"Sakura",rarity:"Common",unlock:"The Mimic reached 1 billion visits",status:"Unavailable",mode:"Not specified",range:25},
+{name:"Wicked Pumpkin",rarity:"Common",unlock:"Complete The Halloween Trials",status:"Not specified",mode:"Not specified",range:18}
 ];
 const book3ShootingRules = [
   {
@@ -324,7 +324,16 @@ const ADMIN_PASSWORD = "PatrioAdmin2026!";
 const ownerAccess = new URLSearchParams(window.location.search).get("owner") === "1";
 let adminMode = false;
 let ghosts = JSON.parse(localStorage.getItem("mimicGhostsData") || "null") || initial.map(x=>({...x}));
-let lanternData = JSON.parse(localStorage.getItem("mimicLanternsData") || "null") || lanterns.map((x,i)=>({...x,id:"lantern-"+i}));
+const lanternSeedMap = new Map(lanterns.map((x,i)=>["lantern-"+i, {...x, id:"lantern-"+i}]));
+let lanternData = (JSON.parse(localStorage.getItem("mimicLanternsData") || "null") || lanterns.map((x,i)=>({...x,id:"lantern-"+i}))).map(item => {
+  const seed = lanternSeedMap.get(item.id);
+  if (!seed) return { mode: "Not specified", ...item };
+  return {
+    ...item,
+    status: item.status === "Not specified" ? seed.status : item.status,
+    mode: item.mode || seed.mode
+  };
+});
 let ghostOrder = JSON.parse(localStorage.getItem("mimicGhostOrder") || "null") || ghosts.map(x=>x.id);
 let lanternOrder = JSON.parse(localStorage.getItem("mimicLanternOrder") || "null") || lanternData.map(x=>x.id);
 let currentView="dashboard", lanternSort="default";
@@ -348,7 +357,7 @@ function dashboard(){let story=ghosts.filter(g=>g.book).length,events=ghosts.len
 function switchView(view){currentView=view;document.querySelectorAll(".navbtn").forEach(x=>x.classList.toggle("active",x.dataset.view===view));$("characterTools").style.display=view==="lanterns"?"none":"flex";$("lanternTools").style.display=view==="lanterns"?"block":"none";updateRole();render();}
 function render(){if(currentView==="lanterns"){renderLanterns();return;}let q=$("search").value.toLowerCase(),book=$("bookFilter").value,status=$("statusFilter").value;let list=orderedGhosts().filter(g=>[g.name,g.japanese,g.alias,g.description,g.arc,g.book,g.chapter].join(" ").toLowerCase().includes(q)&&(!book||g.book===book)&&(!status||g.status===status));if(currentView==="story")list=list.filter(g=>g.collection==="story"||g.book);if(currentView==="events")list=list.filter(g=>g.collection==="event"||(!g.book&&g.arc));$("summary").textContent=adminMode?(currentView==="dashboard"?`Total database: ${ghosts.length} entries`:`Showing ${list.length} entries • Total: ${ghosts.length}`):"";let root=$("content");if(currentView==="dashboard"){root.innerHTML=dashboard();return;}let rulesBox = (currentView === "story" && (!book || book === "Book 3")) ? `<div class="dash-panel" style="margin-bottom:20px;border-color:#51303a"><h3>Book 3 – Monster Shooting Rules</h3><div class="grid" style="margin-top:12px">${book3ShootingRules.map(r=>`<div class="card" style="padding:14px"><h3 style="font-size:16px;color:var(--gold);margin-bottom:8px">${esc(r.level)}</h3>${r.points.map(p=>`<p class="desc" style="margin:4px 0">• ${esc(p)}</p>`).join("")}</div>`).join("")}</div></div>` : "";
 let reset=rulesBox + (adminMode?`<div class="toolbar"><button class="btn" onclick="resetCharacterOrder()">Reset Character Order</button></div>`:"");if(!list.length){root.innerHTML=reset+'<div class="empty">Tidak ada karakter ditemukan.</div>';return;}if(currentView==="all"){root.innerHTML=reset+`<div class="grid">${list.map(card).join("")}</div>`;return;}let groups={};list.forEach(g=>{let key=currentView==="events"?(g.arc||"Other Events"):`${g.book||"Other"} — ${arcFor(g)||"Unknown Arc"}`;(groups[key]??=[]).push(g)});root.innerHTML=reset+Object.entries(groups).map(([group,items])=>{if(currentView==="events")return `<section class="chapter"><div class="section-title"><h2>${esc(group)}</h2><span class="muted">${items.length} entries</span></div><div class="grid">${items.map(card).join("")}</div></section>`;let chapters={};items.forEach(g=>(chapters[g.chapter||"Other"]??=[]).push(g));return `<section class="chapter"><div class="section-title"><h2>${esc(group)}</h2><span class="muted">${items.length} entries</span></div>${Object.entries(chapters).map(([ch,arr])=>`<div class="chapter"><div class="chapter-head"><h3>${esc(ch)}</h3></div><div class="grid">${arr.map(card).join("")}</div></div>`).join("")}</section>`}).join("");}
-function renderLanterns(){let q=$("lanternSearch").value.toLowerCase().trim(),rarity=$("rarityFilter").value,status=$("availabilityFilter").value;let list=orderedLanterns().filter(x=>(!q||(x.name+" "+x.unlock+" "+x.rarity).toLowerCase().includes(q))&&(!rarity||x.rarity===rarity)&&(!status||x.status===status));if(lanternSort==="az")list.sort((a,b)=>a.name.localeCompare(b.name,"en",{numeric:true}));if(lanternSort==="za")list.sort((a,b)=>b.name.localeCompare(a.name,"en",{numeric:true}));let html=`<div class="section-title"><h2>Lantern Skin Database</h2><span class="muted">${list.length} / ${lanternData.length} skins</span></div><div class="dash-panel"><h3>General Rules</h3>${lanternRules.map(x=>`<p class="desc">• ${esc(x)}</p>`).join("")}</div>${adminMode?`<div class="toolbar"><button class="btn" onclick="resetLanternOrder()">Reset Manual Order</button></div>`:""}`;if(!list.length){$("content").innerHTML=html+'<div class="empty">Lantern Skin tidak ditemukan.</div>';return;}html+=`<div class="grid">${list.map(x=>{let rar=x.rarity.replaceAll(" ","-");return `<article class="card rarity-${rar}"><h3>${esc(x.name)}</h3><div class="meta"><span class="tag">${esc(x.rarity)}</span><span class="tag">${esc(x.status)}</span></div><div class="desc">Unlock: ${esc(x.unlock)}<br>Availability: ${esc(x.status)}<br>Range: ${x.range===null||x.range===""?"Not specified":esc(x.range)}</div><div class="card-actions">${adminMode?`<button class="btn" onclick="moveLantern('${x.id}',-1)">↑ Up</button><button class="btn" onclick="moveLantern('${x.id}',1)">↓ Down</button><button class="btn" onclick="editLantern('${x.id}')">Edit</button><button class="btn" onclick="deleteLantern('${x.id}')">Delete</button>`:""}</div></article>`}).join("")}</div>`;$("content").innerHTML=html;}
+function renderLanterns(){let q=$("lanternSearch").value.toLowerCase().trim(),rarity=$("rarityFilter").value,status=$("availabilityFilter").value,mode=$("lanternModeFilter").value;let list=orderedLanterns().filter(x=>(!q||(x.name+" "+x.unlock+" "+x.rarity+" "+(x.mode||"")).toLowerCase().includes(q))&&(!rarity||x.rarity===rarity)&&(!status||x.status===status)&&(!mode||(x.mode||"Not specified")===mode));if(lanternSort==="az")list.sort((a,b)=>a.name.localeCompare(b.name,"en",{numeric:true}));if(lanternSort==="za")list.sort((a,b)=>b.name.localeCompare(a.name,"en",{numeric:true}));let html=`<div class="section-title"><h2>Lantern Skin Database</h2><span class="muted">${list.length} / ${lanternData.length} skins</span></div><div class="dash-panel"><h3>General Rules</h3>${lanternRules.map(x=>`<p class="desc">• ${esc(x)}</p>`).join("")}</div>${adminMode?`<div class="toolbar"><button class="btn" onclick="resetLanternOrder()">Reset Manual Order</button></div>`:""}`;if(!list.length){$("content").innerHTML=html+'<div class="empty">Lantern Skin tidak ditemukan.</div>';return;}html+=`<div class="grid">${list.map(x=>{let rar=x.rarity.replaceAll(" ","-");return `<article class="card rarity-${rar}"><h3>${esc(x.name)}</h3><div class="meta"><span class="tag">${esc(x.rarity)}</span><span class="tag">${esc(x.status)}</span>${x.mode&&x.mode!=="Not specified"?`<span class="tag">${esc(x.mode)}</span>`:""}</div><div class="desc">Unlock: ${esc(x.unlock)}<br>Availability: ${esc(x.status)}<br>Mode: ${esc(x.mode||"Not specified")}<br>Range: ${x.range===null||x.range===""?"Not specified":esc(x.range)}</div><div class="card-actions">${adminMode?`<button class="btn" onclick="moveLantern('${x.id}',-1)">↑ Up</button><button class="btn" onclick="moveLantern('${x.id}',1)">↓ Down</button><button class="btn" onclick="editLantern('${x.id}')">Edit</button><button class="btn" onclick="deleteLantern('${x.id}')">Delete</button>`:""}</div></article>`}).join("")}</div>`;$("content").innerHTML=html;}
 function openModal(title, fields, onSave) {
   $("modalTitle").textContent = title;
   const form = $("modalForm");
@@ -416,9 +425,10 @@ function lanternModal(existing = {}, onSave) {
   openModal(isEdit ? `Edit Lantern: ${existing.name}` : "Add New Lantern", [
     { name: "name", label: "Lantern Name *", value: existing.name, placeholder: "Contoh: Bloodlusted Akari", required: true },
     { name: "rarity", label: "Rarity", type: "select", value: existing.rarity || "Rare", options: ["Mythical", "Developer-Only", "Legendary", "Rare", "Uncommon", "Common"] },
-    { name: "status", label: "Availability", type: "select", value: existing.status || "Available", options: ["Available", "Unavailable", "The shop", "Onsale", "Offsale", "Developer-Only", "Not specified"] },
+    { name: "status", label: "Availability", type: "select", value: existing.status || "Obtainable", options: ["Available", "Obtainable", "Unavailable", "The shop", "Onsale", "Offsale", "Developer-Only", "Not specified"] },
+    { name: "mode", label: "Mode", type: "select", value: existing.mode || "Normal Mode", options: ["Normal Mode", "Nightmare Mode", "All Modes", "Not specified"] },
     { name: "range", label: "Range (opsional)", type: "number", value: existing.range ?? "", placeholder: "Contoh: 25" },
-    { name: "unlock", label: "Unlock Requirement", value: existing.unlock, placeholder: "Contoh: 25,000 Yen", full: true }
+    { name: "unlock", label: "Unlock Requirement", value: existing.unlock, placeholder: "Contoh: Complete Book 3 Chapter 1 on Normal Mode", full: true }
   ], data => {
     onSave({
       ...existing,
@@ -427,6 +437,7 @@ function lanternModal(existing = {}, onSave) {
       rarity: data.rarity,
       unlock: data.unlock.trim(),
       status: data.status,
+      mode: data.mode,
       range: data.range.trim() === "" ? null : Number(data.range)
     });
   });
@@ -439,9 +450,8 @@ $("adminLogoutBtn").onclick=()=>{adminMode=false;updateRole();render();};
 $("addGhostBtn").onclick=addGhost;$("addLanternBtn").onclick=addLantern;
 document.querySelectorAll(".navbtn").forEach(b=>b.addEventListener("click",()=>switchView(b.dataset.view)));
 ["search","bookFilter","statusFilter"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",render));
-["lanternSearch","rarityFilter","availabilityFilter"].forEach(id=>$(id).addEventListener(id==="lanternSearch"?"input":"change",renderLanterns));
+["lanternSearch","rarityFilter","availabilityFilter","lanternModeFilter"].forEach(id=>$(id).addEventListener(id==="lanternSearch"?"input":"change",renderLanterns));
 $("lanternAZ").onclick=()=>{lanternSort="az";renderLanterns();};$("lanternZA").onclick=()=>{lanternSort="za";renderLanterns();};$("lanternReset").onclick=resetLanternOrder;
 updateRole();render();
 </script><div class="modal" id="editorModal"><div class="dialog"><h2 id="modalTitle">Edit</h2><form id="modalForm" class="formgrid"></form><div class="modal-actions"><button type="button" class="btn" id="modalCancel">Cancel</button><button type="submit" form="modalForm" class="btn primary">Save</button></div></div></div>
 </body></html>
-Menganalisis
